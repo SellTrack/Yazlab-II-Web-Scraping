@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, '/Users/selmanorhan/Documents/GitHub/Yazlab-II-Web-Scraping/site-packages')  # 'site-packages/selenium' kısmını kendi yüklü olduğunuz yerle değiştirin
+sys.path.insert(0, '/Users/selmanorhan/Documents/GitHub/Yazlab-II-Web-Scraping/site-packages/beautifulsoup4-4.12.3')  # 'site-packages/selenium' kısmını kendi yüklü olduğunuz yerle değiştirin
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -69,7 +72,11 @@ def get_google_search_results(query):
 
     return results 
 
+
+
 args_as_string = ' '.join(sys.argv[1:])
 print(get_google_search_results(args_as_string.strip("'")))
 # Ornek kullanim: "dosyaadi.py 'aranacak konu'"
+
+
 print("**BITTI**")
