@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yayın Listesi</title>
+</head>
+<body>
+    <h1>Yayın Listesi</h1>
+
+    <ul>
+        {% for yayin in yayinlar %}
+            <li>
+                <strong>Yayın ID:</strong> {{ yayin.yayinId }}<br>
+                <strong>Yayın Adı:</strong> {{ yayin.yayin_adi }}<br>
+                <strong>Yazarlar:</strong> {{ ', '.join(yayin.yazarlar) }}<br>
+                <strong>Yayın Türü:</strong> {{ yayin.yayin_turu }}<br>
+                <strong>Yayınlanma Tarihi:</strong> {{ yayin.yayinlanma_tarihi.strftime("%m-%d-%Y") if yayin.yayinlanma_tarihi else '' }}<br>
+                <strong>Yayıncı Adı:</strong> {{ yayin.yayinci_adi }}<br>
+                <strong>Anahtar Kelimeler (Arama):</strong> {{ ', '.join(yayin.anahtar_kelimeler_arama) }}<br>
+                <strong>Anahtar Kelimeler (Makale):</strong> {{ ', '.join(yayin.anahtar_kelimeler_makale) }}<br>
+                <strong>Özet:</strong> {{ yayin.ozet }}<br>
+                <strong>Referanslar:</strong> {{ ', '.join(yayin.referanslar) }}<br>
+                <strong>Alıntı Sayısı:</strong> {{ yayin.alinti_sayisi }}<br>
+                <strong>DOI Numarası:</strong> {{ yayin.doi_numarasi }}<br>
+                <strong>URL Adresi:</strong> <a href="{{ yayin.url_adresi }}" target="_blank">{{ yayin.url_adresi }}</a>
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+</body>
+</html>
