@@ -13,8 +13,6 @@ from bs4 import BeautifulSoup
 import time
 import subprocess
 
-import sys
-
 options = webdriver.ChromeOptions()
 options.add_argument('headless')  # Run Chrome in headless mode, i.e., without opening a GUI window
 options.add_argument('log-level=3')
@@ -31,7 +29,7 @@ def get_google_search_results(query):
         ignore += f" -site:{site}"
     url = "https://scholar.google.com/scholar?hl=tr&q=" + query + ignore
     driver_google.get(url)
-    driver_google.implicitly_wait(2)
+    driver_google.implicitly_wait(3)
     
     
 
@@ -61,87 +59,43 @@ def get_google_search_results(query):
         
         soup = BeautifulSoup(driver_google.page_source, 'html.parser')
         search = soup.find_all('div', class_="gs_r gs_or gs_scl")
-
         results = []
         for h in search:
-            results.append(h.a.get('href'))
-
-             # Anahtar bilgilerin alınması
-            details['Yayın id'] = str(uuid.uuid4())
-            details['Yayın adı'] = driver_google.find_element(By.XPATH, '//h3[@class="gs_rt"]').text.replace('[HTML]', '').strip()
-            details['Yazarların Adı'] = driver_google.find_element(By.XPATH, '//div[@class="gs_a"]').text.strip().split('-')[0]
-        
-            # Diğer bilgilerin alınması
-            try:
-                details['Yayın türü'] = driver_google.find_element(By.XPATH, '//div[@class="gs_ggs gs_fl"]').text.strip().split('-')[0]
-            except NoSuchElementException:
-                details['Yayın türü'] = ''
-        
-            try:
-                details['Yayımlanma tarihi'] = driver_google.find_element(By.XPATH, '//div[@class="gs_a"]').text.strip().split('-')[-2]
-                publication_year = re.findall(r'\d{4}', details['Yayımlanma tarihi'])[-1]
-                details['Yayımlanma tarihi'] = publication_year
-            except NoSuchElementException:
-                details['Yayımlanma tarihi'] = ''
-        
-            try:
-                details['Yayıncı adı'] = driver_google.find_element(By.XPATH, '//div[@class="gs_a"]').text.strip().split('-')[-2]
-                publisher_name = re.findall(r'([^,]+)', details['Yayıncı adı'])[0]
-                details['Yayıncı adı'] = publisher_name.strip()
-            except NoSuchElementException:
-                details['Yayıncı adı'] = ''
-        
-            try:
-                details['Anahtar kelimeler (Arama motorunda aratılan)'] = driver_google.find_element(By.XPATH, '//div[@class="gs_fl"]').text.strip()
-            except NoSuchElementException:
-                details['Anahtar kelimeler (Arama motorunda aratılan)'] = query
-        
-            try:
-                details['Anahtar kelimeler (Makaleye ait)'] = driver_google.find_element(By.XPATH, '//div[@class="gs_kw"]').text.strip()
-            except NoSuchElementException:
-                details['Anahtar kelimeler (Makaleye ait)'] = ''
-        
-            try:
-                details['Özet'] = driver_google.find_element(By.XPATH, '//div[@class="gs_rs"]').text.strip()
-            except NoSuchElementException:
-                details['Özet'] = ''
-        
-            try:
-                details['Referanslar'] = driver_google.find_element(By.XPATH, '//div[@class="gs_or_cit gs_nph"]').text.strip()
-            except NoSuchElementException:
-                details['Referanslar'] = ''
-        
-            try:
-              citation_element = driver_google.find_element(By.XPATH, "//a[contains(text(), 'Alıntılanma sayısı:')]")
-              details['Alıntı sayısı'] = citation_element.text.strip().split(':')[-1]
-            except NoSuchElementException:
-                details['Alıntı sayısı'] = ''
-        
-            try:
-                details['Doi numarası'] = driver_google.find_element(By.XPATH, '//div[@class="gs_a"]/a[contains(@href, "doi")]/@href').text.strip()
-            except NoSuchElementException:
-                details['Doi numarası'] = ''
-        
-            details['URL adresi'] = h.a.get('href')
-            
-            print(details)
-        
+            details['url'] = h.find('h3', class_='gs_rt').find('a')['href']
+            details['yayın id'] = str(uuid.uuid4())
+            details['yayın adı'] = h.find('h3', class_='gs_rt').text
+            details['yazar adı'] = h.find('div', class_='gs_a').text.split('-')[0].strip()
+            details['yayın türü'] = ''
+            details['yayınlanma tarihi'] = h.find('div', class_='gs_a').text.strip().split('-')[-2]
+            publication_year = re.findall(r'\d{4}', details['yayınlanma tarihi'])[-1]
+            details['yayınlanma tarihi'] = publication_year
+            details['yayıncı adı'] = h.find('div', class_='gs_a').text.strip().split('-')[-2]
+            publisher_name = re.findall(r'([^,]+)', details['yayıncı adı'])[0]
+            details['yayıncı adı'] = publisher_name
+            details['anahtar kelimeler (arama motorundan alınan)'] = query
+            details['anahtar kelimeler (makaleye ait)'] = ''
+            details['özet'] = h.find('div', class_='gs_rs').text
+            details['referanslar'] = ''
+            details['alıntı sayısı'] = h.find('div', class_='gs_fl gs_flb').text.split(':')[1]
+            details['doi numarası'] = ''
+            print("\n------------------------------------------------CIKAN SONUCLAR----------------------------------------\n")
+            print("url adresi : ", details['url'], "\n")
+            print("yayın id : ", details['yayın id'], "\n")
+            print("yayın adı : ", details['yayın adı'], "\n")
+            print("yayın türü : ", details['yayın türü'], "\n")
+            print("yayınlanma tarihi : ", details['yayınlanma tarihi'], "\n")
+            print("yayıncı adı : ", details['yayıncı adı'], "\n")
+            print("anahtar kelimeler (arama motorundan alınan) : ", details['anahtar kelimeler (arama motorundan alınan)'], "\n")
+            print("anahtar kelimeler (makaleye ait) : ", details['anahtar kelimeler (makaleye ait)'], "\n")
+            print("özet : ", details['özet'], "\n")
+            print("referanslar : ", details['referanslar'], "\n")
+            print("alıntı numarası : ", details['alıntı sayısı'], "\n")
+            print("doi numarası : ", details['doi numarası'], "\n")
+            print("\n----------------------------------------------------------------------------------------------------\n")
+            results.append(details)
 
 
-
-    # Sonuçlarda istenmeyen siteleri siler.
-        # ignored_sites = ['facebook','twitter','instagram','linkedin','.gov']
-        # results = [item for item in results if not any(banned_word in item for banned_word in ignored_sites)]
-
-        # Sadece websiteyi alır. 
-        # for i, site1 in enumerate(results):
-        #    results[i] = site1[:site1.find('/', 8)+1] # Temiz urlyi alır.
-        results = list(set(results))    # Kopyaları siler.
-
-        # Yarı otomatik yöntem. Mail aranacak siteyi seçmemiz için bekliyor.
-        time.sleep(4)
-
-    return results 
+    #return results 
 
 
 

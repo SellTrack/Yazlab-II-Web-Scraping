@@ -5,8 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yayın Listesi</title>
+    <!-- HTML dosyanızda Typo.js'yi ekleyin -->
+    <script src="https://cdn.jsdelivr.net/gh/cfinke/Typo.js@2.1.0/typo.min.js"></script>
+
 </head>
 <body>
+
+    <input type="text" id="searchInput" onblur="checkSpelling()">
+
+    
     <h1>Yayın Listesi</h1>
 
     <ul>
@@ -29,5 +36,30 @@
             <hr>
         {% endfor %}
     </ul>
+
+
+    <script>
+        // Typo.js ile dil işleme nesnesini oluşturun
+        var dictionary = new Typo("en_US");
+    
+        // Arama çubuğundaki yazımı kontrol eden fonksiyon
+        function checkSpelling() {
+            var searchInput = document.getElementById("searchInput").value;
+    
+            // Metni parçala ve her kelimenin doğru yazılıp yazılmadığını kontrol et
+            var words = searchInput.split(" ");
+            for (var i = 0; i < words.length; i++) {
+                if (!dictionary.check(words[i])) {
+                    // Eğer kelime yanlış yazılmışsa, düzeltme önerilerini al
+                    var suggestions = dictionary.suggest(words[i]);
+                    if (suggestions.length > 0) {
+                        // En iyi düzeltmeyi al ve kullanıcıya göster
+                        var bestSuggestion = suggestions[0];
+                        alert("Dikkat: '" + words[i] + "' kelimesi muhtemelen '" + bestSuggestion + "' olarak düzeltilmelidir.");
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
