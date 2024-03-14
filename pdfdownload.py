@@ -49,9 +49,6 @@ def pdf_indir_ve_tasi(pdf_url, hedef_dosya, hedef_klasor):
         print(f"Hata oluştu: {hata}")
 
 # Örnek kullanım
-pdf_url = "http://www.egejfas.org/en/download/article-file/57474"
-hedef_dosya = ""
-hedef_klasor = "downloaded-files"
+
 
 # PDF'yi indir ve taşı
-pdf_indir_ve_tasi(pdf_url, hedef_dosya, hedef_klasor)
