@@ -12,7 +12,7 @@
  # :question: How to run the game
  You can run the code with vscode plugins. or use "python3 fullapptest.py" 
 
- # :video_game: About program
+ # :: About program
   This prgram scrapes data from academic search website called "Dergipark" and saves it to the mongoDB database. It also downloads pdf files and saves it locally and shows everything it has collected in a website. in this website you can also search for more data or filter the data you have. In website program also corrects the input you entered for search based on english language.
 
 
